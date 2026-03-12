@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <title>Todo Manager</title>
+    <meta charset="UTF-8">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+
+<div class="container mt-5">
+
+    <div class="text-center mb-4">
+        <h1 class="fw-bold">Gestionnaire de Tâches Todo</h1>
+        <p class="text-muted">Gérez vos tâches facilement</p>
+    </div>
+
+    <div class="row">
+
+        <!-- FORMULAIRE de CREATION -->
+        <div class="col-md-4">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-primary text-white">
+                    Nouvelle tâche
+                </div>
+
+                <div class="card-body">
+
+                    <form action="/tasks" method="post">
+
+                        <div class="mb-3">
+                            <label class="form-label">Titre</label>
+                            <input type="text" name="title" class="form-control" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <input type="text" name="description" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Status</label>
+
+                            <select name="status" class="form-select">
+
+                                <option th:each="s : ${statuses}"
+                                        th:value="${s}"
+                                        th:text="${s}">
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                        <button class="btn btn-primary w-100">
+                            Ajouter la tâche
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- LISTE DES TACHES -->
+        <div class="col-md-8">
+
+            <div class="card shadow-sm">
+
+                <div class="card-header bg-dark text-white">
+                    Liste des tâches
+                </div>
+
+                <div class="card-body">
+
+                    <table class="table table-hover">
+
+                        <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Date création</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+
+                        <tbody>
+
+                        <tr th:each="task : ${tasks}">
+
+                            <td th:text="${task.id}"></td>
+
+                            <td th:text="${task.title}"></td>
+
+                            <td th:text="${task.description}"></td>
+
+                            <td>
+
+                                <form th:action="@{/tasks/update/{id}(id=${task.id})}" method="post">
+
+                                    <select name="status" class="form-select form-select-sm">
+
+                                        <option th:each="s : ${statuses}"
+                                                th:value="${s}"
+                                                th:text="${s}"
+                                                th:selected="${s == task.status}">
+                                        </option>
+
+                                    </select>
+                                    <td th:text="${#temporals.format(task.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+
+                            </td>
+
+                            <td>
+
+                                <button class="btn btn-sm btn-success">
+                                    Modifier
+                                </button>
+
+                                </form>
+
+                                <a class="btn btn-sm btn-danger"
+                                   th:href="@{/tasks/delete/{id}(id=${task.id})}"
+                                   onclick="return confirmDelete()">
+                                    Supprimer
+                                </a>
+
+                            </td>
+
+                        </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+    function confirmDelete(){
+        return confirm("Voulez-vous vraiment supprimer cette tâche ?");
+    }
+</script>
+
+</body>
+</html>
